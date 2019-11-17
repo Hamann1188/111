@@ -1,0 +1,66 @@
+<html>
+
+<head>
+  <title>Login</title>
+</head>
+	
+<body>
+	<script type="text/javascript">
+		
+			function loging()
+			{
+				var data={}
+				data['username'] = document.getElementById('username').value
+				data['password'] = document.getElementById('password').value
+				// construct an HTTP request
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", location.origin+"/api/auth", true); // false for synchronous request
+				xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	
+				json = JSON.stringify(data)
+				// send the collected data as JSON
+				xhr.send(json);
+				
+				xhr.onloadend = function () 
+				{
+					if(xhr.status != 200)
+					{	
+						alert('HTTP '+xhr.status)
+						return;
+					}
+					
+					response = JSON.parse(xhr.responseText)
+					if( 'error' in response)
+					{
+						alert('Error: '+response['error'])
+					}else
+					{
+						document.cookie = 'token='+response.token
+						window.location.href = location.origin+response.homePage
+					}
+										
+				};
+			}
+				
+	</script>
+
+	<div class="container">
+		<label for="uname"><b>Username</b></label>
+		<input type="text" placeholder="Enter Username" name="uname" id='username' required>
+
+		<label for="psw"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" name="psw" id='password' required>
+
+		<button type="submit" onclick='loging();'>Login</button>
+	</div>
+	
+	
+	
+
+
+	
+</body>
+
+
+
+</html>

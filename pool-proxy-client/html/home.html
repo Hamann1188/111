@@ -1,0 +1,104 @@
+<html>
+
+<head>
+  <title>Proxy Pool Client</title>
+  <script type="text/javascript">
+			function loadStatistics()
+			{
+				
+				// construct an HTTP request
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", location.origin+"/api/statistics", false); // false for synchronous request
+				xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	
+				// send the collected data as JSON
+				xhr.send(null);
+				
+				var json = xhr.response
+				
+				if(xhr.status != 200)
+				{	
+					alert('HTTP '+xhr.status)
+					return;
+				}
+				
+				statistics = JSON.parse(xhr.responseText)
+				var tbody=document.createElement('tbody');
+				
+				if(statistics.length > 0)
+				{	
+					pool = statistics[0]
+					for(i=0;i<pool.miners.length;i++)
+					{
+						var row = tbody.insertRow(tbody.rows.length);
+						var miner = pool.miners[i];
+						
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = miner.host;
+
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = miner.name;
+
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = Math.round(miner.lastShareSeconds/60);
+
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = miner.reportedHPS;
+						
+						/*
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = JSON.stringify(miner.shares);
+						
+						var cell = row.insertCell(row.cells.length);
+						cell.innerHTML = JSON.stringify(miner.impliedHashRates);
+						*/
+					}
+				}
+				
+				var table = document.getElementById("miner-table");
+				var previous_tbody = table.tBodies[0];
+				previous_tbody.parentNode.replaceChild(tbody, previous_tbody)
+			}
+
+			window.onload=loadStatistics;			
+	</script>
+  
+	<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+	</style>
+</head>
+	
+<body>
+	
+
+	<table id="miner-table" style="width:50%">
+		<thead>
+		  <tr>
+			<th>Host</th>
+			<th>Name</th>
+			<th>Last share (minutes ago)</th>
+			<th>HPS (reported)</th>
+			<!--th>Shares</th> 
+			<th>Implied Hashrate</th-->
+		  </tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+
+</body>
+
+
+
+</html>
